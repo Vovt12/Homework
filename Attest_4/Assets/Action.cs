@@ -12,19 +12,23 @@ public class Action : MonoBehaviour
     public TextMeshProUGUI Vopros;
     public TextMeshProUGUI BrotherTolk;
     public TextMeshProUGUI SlimeTolk;
+    public TextMeshProUGUI Life;
     public Canvas canvasTalk;
-    public float DrtX, DrtY, ColJump, y;
+    public float DrtX, DrtY, ColJump, y, distante;
     public float Speed = 2f;
     public float jump = 10;
     public int money;
     public int i;
     public bool talking;
     public bool Jumper;
+    public int life = 3;
+    public Vrag vr;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         Text.text = $"Количество монет: {money}";
+        Life.text = $"Количество жизней {life}";
         Vopros.text = " ";
         BrotherTolk.text = " ";
         SlimeTolk.text = " ";
@@ -33,6 +37,7 @@ public class Action : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Life.text = $"Количество жизней {life}";
         W();
         Talk();
         if (Jumper == false)
@@ -56,6 +61,11 @@ public class Action : MonoBehaviour
             transform.position = transform.TransformDirection(0, 0, 0);
             transform.rotation = Quaternion.Euler(0, 0, 0);
         }
+        if (life == 0)
+        {
+            transform.position = new Vector3(0, 0);
+            life = 3;
+        }
     }
     void W()
     {
@@ -71,6 +81,8 @@ public class Action : MonoBehaviour
         {
             sr.flipX = false;
         }
+        if(Input.GetKey(KeyCode.X))
+            transform.rotation = Quaternion.Euler(0, 0, 0); ;
     }
     void Talk()
     {
@@ -95,7 +107,7 @@ public class Action : MonoBehaviour
                             SlimeTolk.text = " ";
                             BrotherTolk.text = g[i + 1];
                         }
-                        else if(i == g.Length)
+                        else if (i == g.Length)
                         {
                             talking = false;
                         }
@@ -132,11 +144,23 @@ public class Action : MonoBehaviour
         {
             talking = true;
         }
+        else if (collision.gameObject.tag == "Apply")
+        {
+            life = 3;
+            Life.text = $"Количество жизней {life}";
+            Destroy(collision.gameObject);
+
+        }
+        else if (collision.gameObject.tag == "Vrag")
+        {
+            vr.life = vr.life - 2;
+            life--;
+            Life.text = $"Количество жизней {life}";
+        }
         else if (collision.gameObject.tag != "Money" || collision.gameObject.tag != "Talk")
         {
             BrotherTolk.text = " ";
             SlimeTolk.text = " ";
         }
-
     }
 }
